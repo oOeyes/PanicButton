@@ -1,0 +1,21 @@
+{
+  "@metadata" : {
+    "authors" : [
+      "OOeyes"
+    ]
+  },
+  "panicbutton"              : "The name of the extension's entry in Special:SpecialPages",
+  "panicbutton-desc"         : "{{desc}}",
+  "panicbutton-summary"      : "Description appearing on top of [[Special:SpecialPages]]",
+  "right-panic"              : "((doc-right|panic}}",
+  "action-panic"             : "{{doc-action|panic}}",
+  "anons-cant-edit-anyway"   : "Warning message indicating that anonymous editing is disabled in the <tt>LocalSettings.php</tt> file already. Appears on [[Special:PanicButton]].",
+  "panic-button-active"      : "Sentence reporting the panic button is on and anonymous editing is disabled.",
+  "reset-panic-button-desc"  : "Sentence explaining that resetting the panic button will cause it to no longer block anonymous edits.",
+  "reset-panic-button-text"  : "Text for the button that resets the panic button.",
+  "panic-button-inactive"    : "Sentence reporting the panic button is off.",
+  "press-panic-button-desc"  : "Description explaining that the panic button disables anonymous editing and explaining that the panic button is intended for temporary use. Explains disabling anonymous editing long-term should be done through <tt>LocalSettings.php</tt>.",
+  "press-panic-button-text"  : "Text for the panic button",
+  "panic-button-activated"   : "Text that appears on the page just after pressing the panic button that explains it is now active and preventing anonymous edits.",
+  "panic-button-deactivated" : "Text that appears on the page just after resetting the panic button that explains it is now inactive and no longer preventing anonymous edits."
+}

@@ -1,0 +1,21 @@
+{
+  "@metadata" : {
+    "authors" : [
+      "OOeyes"
+    ]
+  },
+  "panicbutton"              : "Panic button",
+  "panicbutton-desc"         : "Provides a special page that allows specified users to shut off editing permissions for anonymous users.",
+  "panicbutton-summary"      : "Allows specified users with the \"panic\" right to shut off editing permissions for anonymous users.",
+  "right-panic"              : "Press the [[Special:PanicButton|panic button]] to disable anonymous edits.",
+  "action-panic"             : "press the panic button",
+  "anons-cant-edit-anyway"   : "'''Warning.''' Anonymous editing is currently deactivated on this wiki. The panic button setting will have no effect unless anonymous editing is enabled in <tt>LocalSettings.php</tt>.",
+  "panic-button-active"      : "The panic button is currently '''<big>On</big>''', disabling anonymous editing.",
+  "reset-panic-button-desc"  : "Resetting the panic button will stop preventing anonymous editing.",
+  "reset-panic-button-text"  : "Reset the panic button",
+  "panic-button-inactive"    : "The panic button is currently <big>Off</big>.",
+  "press-panic-button-desc"  : "Pressing the panic button will prevent anonymous editing. This is intended as a temporary measure against heavy vandalism, spamming, or abuse by anonymous users. To disable anonymous editing permanently, settings in <tt>LocalSettings.php</tt> should be changed instead.",
+  "press-panic-button-text"  : "Press the panic button",
+  "panic-button-activated"   : "The panic button has been pressed and is now '''<big>On</big>'''. Only registered users can now edit.",
+  "panic-button-deactivated" : "The panic button has been reset and is now <big>off</big>."
+}

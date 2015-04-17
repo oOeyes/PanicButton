@@ -8,33 +8,63 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU General Public License 2.0 or later
  */
 
-class PanicButtonConfFile {  
+class PanicButtonConfFile {
+  
+  /**
+   * The configuration object.
+   * @var type 
+   */
+  private $mConfig;
   
   /**
    * The edit permissions from LocalSettings.php.
    * @var Array
   */
-  var $mPermissions;
+  private $mPermissions;
   
   /**
    * The edit permissions overrides from this extension's configuration.
    * @var Array
    */
-  var $mOverrides;
+  private $mOverrides;
   
   /**
+   * This class is a singleton. This holds the single instance.
+   * @var PanicButtonConfFile 
+   */
+  private static $mInstance = null;
+  
+  /**
+   * Instantiates the singleton, which triggers initialization steps.
+   * @param Title $title Page title instance. Required by the hook, but not used here.
+   * @param Article $article Article instance. Required by the hook, but is null is not used here.
+   * @param OutputPage $output OutputPage instance. The config is acquired from this per current recommendations.
+   * @param User $user User instance. Required by the hook, but not used here.
+   * @param WebRequest $request WebRequest instance. Required by the hook, but not used here.
+   * @param MediaWiki $mediaWiki The MediaWiki instance. Required by the hook, but not used here.
+   */
+  public static function onBeforeInitialize( &$title, &$article, &$output, &$user, $request, $mediaWiki ) {
+    self::$mInstance = new self( $output->getConfig() );
+  }
+  
+  /**
+   * Gets the singleton instance of this class, or null if initilization has not yet been performed.
+   * @return PanicButtonConfFile
+   */
+  public static function getInstance() {
+    return self::$mInstance;
+  }
+  
+    /**
    * Initializes variables and loads or creates the conf file.
-   * @global Array $wgGroupPermissions
-  */
-  function __construct( ) {
+   * #param Config $config A reference to the main config object.
+   */
+  function __construct( &$config ) {
     global $wgGroupPermissions;
     
-    $this->mPermissions = Array();
+    $this->mConfig = $config;
     $this->mOverrides = Array();
 
-    // this is intended to be expanded in future versions
-    // but for now, we just check and record the edit permission for anons
-    $this->mPermissions['*'] = $wgGroupPermissions['*']['edit'];
     if ( $this->exists( ) ) {
       $this->load( );
     } else {
@@ -44,8 +74,8 @@ class PanicButtonConfFile {
   
   /**
    * Creates the conf file.
-  */
-  function create( ) {
+   */
+  public function create( ) {
     if ( !is_dir( dirname( __FILE__ ) . "/conf" ) ) {
       mkdir( dirname( __FILE__ ) . "/conf" );
     }
@@ -58,7 +88,7 @@ class PanicButtonConfFile {
    * Returns true if the conf file exists.
    * @return boolean
   */
-  function exists( ) {
+  public function exists( ) {
     return file_exists( dirname( __FILE__ ) . "/conf/PanicButton.conf" );
   }
   
@@ -67,7 +97,7 @@ class PanicButtonConfFile {
    * @param string $group
    * @return boolean
   */
-  function getOverride( $group ) {
+  public function getOverride( $group ) {
     return $this->mOverrides[$group];
   }
   
@@ -76,17 +106,18 @@ class PanicButtonConfFile {
    * @param string $group
    * @return boolean
   */
-  function getPermission( $group ) {
-    return $this->mPermissions[$group];
+  public function getPermission( $group ) {
+    $permissions = $this->mConfig->get('GroupPermissions');
+    
+    return $permissions[$group]['edit'] ? true : false;
   }
   
   /**
    * Loads the conf file and puts any enabled overrides into effect.
-   * @global boolean $wgGroupPermissions 
+   * @global $wgGroupPermissions
   */
-  function load( ) {
-    global $wgGroupPermissions;
-    
+  public function load( ) {
+    global $wgGroupPermissions; // still must use the global since we're altering configuration here
     $handle = fopen( dirname( __FILE__ ) . "/conf/PanicButton.conf", "r" );
     
     while ( ( $buffer = fgets( $handle ) ) !== false ) {
@@ -107,7 +138,7 @@ class PanicButtonConfFile {
   /**
    * Saves the conf file according to the current override status.
   */
-  function save( ) {
+  public function save( ) {
     $handle = fopen( dirname( __FILE__ ) . "/conf/PanicButton.conf", "w" );
     
     // @todo should this verify the user group exists first?
@@ -127,7 +158,7 @@ class PanicButtonConfFile {
    * @param string $group
    * @param boolean $value 
   */
-  function setOverride( $group, $value ) {
+  public function setOverride( $group, $value ) {
     $this->mOverrides[$group] = $value;
   }
 }

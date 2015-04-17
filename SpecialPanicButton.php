@@ -15,48 +15,46 @@ class SpecialPanicButton extends SpecialPage {
   */
   function __construct() {
     parent::__construct( 'PanicButton', 'panic' );
-    wfLoadExtensionMessages( 'PanicButton' );
   }
   
   /**
    * Processes a panic button press or reset.
    * @param string $anonOverride
-   * @param PanicButtonConfFile $conf
    */
-  function applyChanges( $anonOverride, $conf ) {
-    global $wgOut;
+  function applyChanges( $anonOverride ) {
+    $out = $this->getOutput();
+    $conf = PanicButtonConfFile::getInstance();
     
     if ( $anonOverride === '1' ) {
       $conf->setOverride( '*', true );
       $conf->save();
       
-      $wgOut->addWikiText( wfMsg( "panic-button-activated" ) );
+      $out->addWikiText( wfMessage( "panic-button-activated" )->text() );
     } elseif ( $anonOverride === '0' ) {
       $conf->setOverride( '*', false );
       $conf->save();
       
-      $wgOut->addWikiText( wfMsg( "panic-button-deactivated" ) );
+      $out->addWikiText( wfMessage( "panic-button-deactivated" )->text() );
     }
   }
  
   /**
    * Processes a request for Special:PanicButton.
-   * @global WebRequest $wgRequest
-   * @global OutputPage $wgOut
-   * @global User $wgUser
-   * @global PanicButtonConfFile $wgpbConfFile
    * @param string $par 
   */
   function execute( $par ) {
-    global $wgRequest, $wgOut, $wgUser, $wgpbConfFile;
+    $request = $this->getRequest();
+    $out = $this->getOutput();
+    $user = $this->getUser();
+    
     $this->setHeaders();
 
-    if ( $wgUser->isAllowed( "panic" ) ) {
-      $anonOverride = $wgRequest->getText( 'anonoverride' );
+    if ( $user->isAllowed( "panic" ) ) {
+      $anonOverride = $request->getText( 'anonoverride' );
       if ( $anonOverride === "0" || $anonOverride === "1" ) {
-        $this->applyChanges( $anonOverride, $wgpbConfFile );
+        $this->applyChanges( $anonOverride );
       } else {
-        $this->showForm( $wgpbConfFile );
+        $this->showForm( );
       }
     } else {
       $this->displayRestrictionError();
@@ -65,43 +63,42 @@ class SpecialPanicButton extends SpecialPage {
   
   /**
    * Shows the panic button form.
-   * @global OutputPage $wgOut
-   * @global string $wgScriptPath
-   * @param PanicButtonConfFile $conf 
   */
-  function showForm( $conf ) {
-    global $wgOut, $wgScriptPath;
+  function showForm( ) {
+    $out = $this->getOutput();
+    $conf = PanicButtonConfFile::getInstance();
+    $scriptPath = $this->getContext()->getConfig()->get("ScriptPath");
     
     if ( !$conf->getPermission( '*' ) ) {
-      $wgOut->addWikiText( wfMsg( "anons-cant-edit-anyway" ) . "\n\n" );
+      $out->addWikiText( wfMessage( "anons-cant-edit-anyway" )->text() . "\n\n" );
     }
     
     $value = $button = "";
     if ( $conf->getOverride( '*' ) === true ) {
-      $wgOut->addWikiText( wfMsg( "panic-button-active" ) . "\n\n" );
+      $out->addWikiText( wfMessage( "panic-button-active" )->text() . "\n\n" );
       if ( $conf->getPermission( '*' ) ) {
-        $wgOut->addWikiText( wfMsg( "reset-panic-button-desc" ) . "\n\n" );
+        $out->addWikiText( wfMessage( "reset-panic-button-desc" )->text() . "\n\n" );
       }
       $value = "0";
-      $button = wfMsg( "reset-panic-button-text" );
+      $button = wfMessage( "reset-panic-button-text" )->text();
     } else {
-      $wgOut->addWikiText( wfMsg( "panic-button-inactive" ) . "\n\n" );
+      $out->addWikiText( wfMessage( "panic-button-inactive" )->text() . "\n\n" );
       if ( $conf->getPermission( '*' ) ) {
-        $wgOut->addWikiText( wfMsg( "press-panic-button-desc" ) . "\n\n" );
+        $out->addWikiText( wfMessage( "press-panic-button-desc" )->text() . "\n\n" );
       }
       $value = "1";
-      $button = wfMsg( "press-panic-button-text" );
+      $button = wfMessage( "press-panic-button-text" )->text();
     }
     
     $form = <<<ENDFORM
-<form action="{$wgScriptPath}/index.php" method="post">
+<form action="{$scriptPath}/index.php" method="post">
   <input type="hidden" name="title" value="Special:PanicButton">
   <input type="hidden" name="anonoverride" value="{$value}">
   <input type="submit" value="{$button}">
 </form>
 ENDFORM;
   
-    $wgOut->addHTML( $form );
+    $out->addHTML( $form );
   }
 }
 

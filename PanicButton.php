@@ -18,16 +18,16 @@ $wgExtensionCredits['specialpage'][] = array(
   'description'    => 'Provides a special page that allows specified users to shut off ' . 
                       'editing permissions for anonymous users.',
   'descriptionmsg' => 'panicbutton-desc',
-  'version'        => 0.5,
+  'version'        => 0.75,
 );
 
 $wgAvailableRights[] = 'panic';
 
-require_once( dirname ( __FILE__ ) . "/PanicButtonConfFile.php" );
-$wgpbConfFile = new PanicButtonConfFile();
-
+$wgAutoloadClasses['PanicButtonConfFile'] = dirname ( __FILE__ ) . '/PanicButtonConfFile.php';
+$wgHooks['BeforeInitialize'][] = 'PanicButtonConfFile::onBeforeInitialize';
 $wgAutoloadClasses['SpecialPanicButton'] = dirname ( __FILE__ ) . '/SpecialPanicButton.php';
-$wgExtensionMessagesFiles['PanicButton'] = dirname ( __FILE__ ) . '/PanicButton.i18n.php';
+$wgMessagesDirs['PanicButton'] = dirname ( __FILE__ ) . '/i18n';
+$wgExtensionMessagesFiles['PanicButton'] = dirname ( __FILE__ ) . '/PanicButton.alias.php';
 $wgSpecialPages['PanicButton'] = 'SpecialPanicButton'; 
 $wgSpecialPageGroups['PanicButton'] = 'users';
 
